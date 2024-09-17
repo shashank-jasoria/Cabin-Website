@@ -12,7 +12,6 @@ export const metadata = {
 };
 
 export default function Page({ searchParams }) {
-  console.log(searchParams, "console log");
   const filter = searchParams.capacity ?? "all";
   return (
     <div>

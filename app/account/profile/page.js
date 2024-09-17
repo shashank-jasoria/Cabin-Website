@@ -1,6 +1,5 @@
 import SelectCountry from "@/app/_components/SelectCountry";
-import UpdateProfileForm from "@/app/_components/updateProfileForm";
-
+import UpdateProfileForm from "@/app/_components/UpdateProfileForm";
 export default function Page() {
   // CHANGE
   const countryFlag = "pt.jpg";

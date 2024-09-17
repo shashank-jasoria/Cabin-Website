@@ -96,7 +96,6 @@ export async function getBookings(guestId) {
 }
 
 export async function getBookedDatesByCabinId(cabinId) {
-  console.log(cabinId, "clclclc");
   let today = new Date();
   today.setUTCHours(0, 0, 0, 0);
   today = today.toISOString();
@@ -121,7 +120,6 @@ export async function getBookedDatesByCabinId(cabinId) {
       });
     })
     .flat();
-  console.log(bookedDates, "clclclc");
 
   return bookedDates;
 }
