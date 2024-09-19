@@ -1,9 +1,12 @@
 "use client";
 
-import { isWithinInterval } from "date-fns";
-import { useState } from "react";
+import {
+  differenceInDays,
+  isPast,
+  isSameDay,
+  isWithinInterval,
+} from "date-fns";
 import { DayPicker } from "react-day-picker";
-// import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useReservation } from "./ReservationContext";
 
@@ -19,16 +22,15 @@ function isAlreadyBooked(range, datesArr) {
 
 function DateSelector({ settings, cabin, bookedDates }) {
   const { range, setRange, resetRange } = useReservation();
-  // const [range, setRange] = useState({ from: undefined, to: undefined });
-  // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
-  // const range = { from: null, to: null };
 
-  // SETTINGS
+  const displayRange = isAlreadyBooked(range, bookedDates) ? {} : range;
+
+  const { regularPrice, discount } = cabin;
+  const numNights = differenceInDays(displayRange.to, displayRange.from);
+  const cabinPrice = numNights * (regularPrice - discount);
+
   const { minBookingLength, maxBookingLength } = settings;
+  // const range = { from: null, to: null };
 
   return (
     <div className="flex flex-col justify-between">
@@ -36,13 +38,17 @@ function DateSelector({ settings, cabin, bookedDates }) {
         className="pt-12 place-self-center"
         mode="range"
         onSelect={setRange}
-        selected={range}
+        selected={displayRange}
         min={minBookingLength + 1}
         max={maxBookingLength}
         fromMonth={new Date()}
         fromDate={new Date()}
         toYear={new Date().getFullYear() + 5}
         captionLayout="dropdown"
+        disabled={(curDate) =>
+          isPast(curDate) ||
+          bookedDates.some((date) => isSameDay(date, curDate))
+        }
         numberOfMonths={2}
       />
 
@@ -51,13 +57,15 @@ function DateSelector({ settings, cabin, bookedDates }) {
           <p className="flex gap-2 items-baseline">
             {discount > 0 ? (
               <>
-                <span className="text-2xl">${regularPrice - discount}</span>
+                <span className="text-2xl">
+                  &#8377;{regularPrice - discount}
+                </span>
                 <span className="line-through font-semibold text-primary-700">
-                  ${regularPrice}
+                  &#8377;{regularPrice}
                 </span>
               </>
             ) : (
-              <span className="text-2xl">${regularPrice}</span>
+              <span className="text-2xl">&#8377;{regularPrice}</span>
             )}
             <span className="">/night</span>
           </p>
@@ -68,7 +76,9 @@ function DateSelector({ settings, cabin, bookedDates }) {
               </p>
               <p>
                 <span className="text-lg font-bold uppercase">Total</span>{" "}
-                <span className="text-2xl font-semibold">${cabinPrice}</span>
+                <span className="text-2xl font-semibold">
+                  &#8377;{cabinPrice}
+                </span>
               </p>
             </>
           ) : null}
